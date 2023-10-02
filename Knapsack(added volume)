@@ -1,0 +1,35 @@
+#include<bits/stdc++.h>
+using namespace std;
+vector<int>weight(100);
+vector<int>vol(100);
+vector<int>val(100);
+int n, mxweight, mxvol;
+
+int knapsack(){
+    vector<vector<vector<int>>>dp(n+5, vector<vector<int>>(mxweight+5, vector<int>(mxvol+5, 0)));
+    for(int i = 1; i<=n; ++i){
+        for(int w = 1; w<=mxweight; ++w){
+           for(int v = 1; v<=mxvol; ++v){
+                int take = 0, dont_take = 0;
+                if(weight[i-1]<=w  and vol[i-1]<=v){
+                    take = val[i-1]+dp[i-1][w-weight[i-1]][v-vol[i-1]];
+                }else{
+                    dont_take = dp[i-1][w][v];
+                }
+                dp[i][w][v] = max(take, dont_take);
+           }
+        }
+    }
+    return dp[n][mxweight][mxvol];
+
+}
+
+int main(){
+    cin >> n >> mxweight >> mxvol;
+    for(int i = 0; i<n; ++i) cin >> val[i];
+    for(int i = 0; i<n; ++i) cin >> weight[i];
+    for(int i = 0; i<n; ++i) cin >> vol[i];
+
+    int ans = knapsack();
+    cout << ans << endl;
+}
