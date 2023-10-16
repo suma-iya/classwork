@@ -1,0 +1,67 @@
+/*
+6 10 3
+1 2 2
+1 3 4
+2 4 3
+4 5 2
+4 6 3
+4 3 1
+3 6 5
+5 6 4
+5 2 3
+4 1 4
+*/
+#include<bits/stdc++.h>
+using namespace std;
+int w[10][10];
+int mem[10][1<<10];
+int n, no_vis_node;
+int inf = 1e9;
+int turn(int x, int pos){
+    return x|(1<<pos);
+}
+bool isOn(int x, int pos){
+    return (bool)(x&(1<<pos));
+}
+int y;
+int f(int i, int mask){
+    int x = mask;
+    int cnt = __builtin_popcount(mask);
+    if(cnt == no_vis_node){
+            return w[i][y];
+    }
+    if(mem[i][mask]!=-1) return mem[i][mask];
+    int ans = inf;
+    for(int j = 1; j<=n; ++j){
+        if(w[i][j]==inf) continue;
+        if(isOn(mask, j)==0){
+            int result = f(j, turn(mask, j)) + w[i][j];
+            ans = min(ans, result);
+        }
+    }
+    return mem[i][mask] = ans;
+}
+int main(){
+    int no_edge;
+    cin >> n >> no_edge >> no_vis_node;
+    for(int i = 0; i<10; ++i){
+        for(int j = 0; j<10; ++j){
+            w[i][j] = inf;
+        }
+    }
+    for(int i = 0; i<10; ++i)
+        for(int j = 0; j<(1<<10); ++j)
+            mem[i][j] = -1;
+    for(int i = 0; i<no_edge; ++i){
+        int u, v, cost;
+        cin >> u >> v >> cost;
+        w[u][v] = cost;
+        w[v][u] = cost;
+    }
+    int ans = inf;
+    for(int i = 1; i<=n; ++i){
+        y = i;
+        ans = min(ans,f(i, 1<<i));
+    }
+    cout << ans;
+}
